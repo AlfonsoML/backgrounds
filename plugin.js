@@ -69,6 +69,8 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
 
 		// Get a reference to the tab.
 		var tab = dialogDefinition.getContents( tabName );
+		if (!tab)
+			return;
 
 		// The text field
 		var textInput =  {
