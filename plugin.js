@@ -1,6 +1,6 @@
-/*
+﻿/*
  * @file Background plugin for CKEditor
- * Copyright (C) 2011-13 Alfonso Mart�nez de Lizarrondo
+ * Copyright (C) 2011-13 Alfonso Martínez de Lizarrondo
  *
  * == BEGIN LICENSE ==
  *
@@ -19,6 +19,8 @@
  * == END LICENSE ==
  *
  */
+(function() {
+"use strict";
 
 // A placeholder just to notify that the plugin has been loaded
 CKEDITOR.plugins.add( 'backgrounds',
@@ -36,7 +38,8 @@ CKEDITOR.plugins.add( 'backgrounds',
 				allowedContent: {
 					'table td th': {
 						propertiesOnly: true,
-						attributes :'background'
+                        attributes: 'background',
+                        styles: 'background-repeat,background-position'
 					}
 				}
 			} );
@@ -61,21 +64,26 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
 			tabName = 'advanced';
 
 		if ( dialogName == 'cellProperties' )
+		{
 			tabName = 'info';
+			dialogDefinition.minHeight += 80;
+		}
 
 		// Not one of the managed dialogs.
 		if ( tabName == '' )
 			return;
 
 		// Get a reference to the tab.
-		var tab = dialogDefinition.getContents( tabName );
+		var tab = dialogDefinition.getContents( tabName ),
+			lang = editor.lang.backgrounds;
+
 		if (!tab)
 			return;
 
 		// The text field
 		var textInput =  {
 				type : 'text',
-				label : editor.lang.backgrounds.label,
+				label : lang.label,
 				id : 'background',
 				setup : function( selectedElement )
 				{
@@ -92,14 +100,6 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
 				}
 			};
 
-		// Enabled/disabled automatically in 4.1 by ACF
-		if ( dialogName == 'cellProperties' )
-		{
-			textInput.requiredContent = 'td[background];th[background]';
-		}
-		else
-			textInput.requiredContent = 'table[background]';
-
 		// File browser button
 		var browseButton =  {
 				type : 'button',
@@ -115,12 +115,106 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
 				requiredContent : textInput.requiredContent
 			};
 
+		// The position field
+		var backgroundPosition = {
+			type: 'select',
+			label: lang.position,
+			id: 'backgroundPosition',
+			items:
+			[
+				[lang.left_top,'left top'],
+				[lang.left_center,'left center'],
+				[lang.left_bottom,'left bottom'],
+				[lang.center_top,'center top'],
+				[lang.center_center,'center center'],
+				[lang.center_bottom,'center bottom'],
+				[lang.right_top,'right top'],
+				[lang.right_center,'right center'],
+				[lang.right_bottom,'right bottom']
+			],
+			setup: function (selectedElement) {
+				this.setValue( selectedElement.getStyle('background-position') );
+			},
+			onChange: function() {
+				var stylesInput = this.getDialog().getContentElement('advanced', 'advStyles');
+
+				if (stylesInput) {
+					stylesInput.updateStyle('background-position', this.getValue());
+				}
+			},
+			commit: function (data, selectedElement) {
+				var element = selectedElement || data,
+					value = this.getValue(),
+					oBackground = this.getDialog().getContentElement(tabName, "background"),
+					background = oBackground && oBackground.getValue();
+
+				if (value && background)
+					element.setStyle('background-position', value);
+				else
+					element.removeStyle('background-position'); // it doesn't really work for the table
+			}
+		};
+
+		// The repeat select field
+		var backgroundRepeat = {
+			type: 'select',
+			label: lang.repeat,
+			id: 'backgroundRepeat',
+			items:
+			[
+				[ lang.repeatBoth, '' ],
+				[ lang.repeatX, 'repeat-x' ],
+				[ lang.repeatY, 'repeat-y' ],
+				[ lang.repeatNone, 'no-repeat' ]
+			],
+			setup: function (selectedElement) {
+				this.setValue( selectedElement.getStyle('background-repeat') );
+			},
+			onChange: function() {
+				var stylesInput = this.getDialog().getContentElement('advanced', 'advStyles');
+
+				if (stylesInput) {
+					stylesInput.updateStyle('background-repeat', this.getValue());
+				}
+			},
+			commit: function (data, selectedElement) {
+				var element = selectedElement || data,
+					value = this.getValue(),
+					oBackground = this.getDialog().getContentElement(tabName, "background"),
+					background = oBackground && oBackground.getValue();
+
+				if (value && background)
+					element.setStyle('background-repeat', value);
+				else
+					element.removeStyle('background-repeat'); // it doesn't really work for the table
+			}
+		};
+
+		// Enabled/disabled automatically in 4.1 by ACF
+		if ( dialogName == 'cellProperties' )
+		{
+			textInput.requiredContent = 'td[background];th[background]';
+			backgroundPosition.requiredContent = 'td[background];th[background]';
+			backgroundRepeat.requiredContent = 'td[background];th[background]';
+		}
+		else
+		{
+			textInput.requiredContent = 'table[background]';
+			backgroundPosition.requiredContent = 'table[background]';
+			backgroundRepeat.requiredContent = 'table[background]';
+		}
+
 		// Add the elements to the dialog
-		if ( tabName == 'advanced')
+		if (tabName == 'advanced')
 		{
 			// Two rows
 			tab.add(textInput);
 			tab.add(browseButton);
+			tab.add({
+				type: 'hbox',
+				widths: ['', '100px'],
+				children: [backgroundPosition, backgroundRepeat ]
+			});
 		}
 		else
 		{
@@ -132,22 +226,66 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
 					children : [ textInput, browseButton],
 					requiredContent : textInput.requiredContent
 			});
+			tab.add({
+				type: 'hbox',
+				widths: ['', '100px'],
+				children: [backgroundPosition, backgroundRepeat]
+			});
 		}
 
 	// inject this listener before the one from the fileBrowser plugin so there are no problems with the new fields.
 	}, null, null, 9 );
 
 
-// Translations for the label
-if (CKEDITOR.skins)
-{
-	// V3
-	CKEDITOR.plugins.setLang( 'backgrounds', 'en', { backgrounds : { label	: 'Background image'} } );
-	CKEDITOR.plugins.setLang( 'backgrounds', 'es', { backgrounds : { label	: 'Imagen de fondo'	} } );
-}
-else
-{
-	// V4
-	CKEDITOR.plugins.setLang( 'backgrounds', 'en',	{label	: 'Background image'} );
-	CKEDITOR.plugins.setLang( 'backgrounds', 'es',	{label	: 'Imagen de fondo'} );
-}
+// Translations
+	var textsEn = {
+		label	: 'Background image',
+		position : 'Background position',
+		repeat: 'Background repeat',
+		repeatBoth : 'Repeat',
+		repeatX : 'Horizontally',
+		repeatY : 'Verticaly',
+		repeatNone : 'None',
+		left_top : 'Left Top',
+		left_center :'Left Center',
+		left_bottom : 'Left Bottom',
+		center_top : 'Center Top',
+		center_center : 'Center Center',
+		center_bottom :'Center Bottom',
+		right_top : 'Right Top',
+		right_center :' Right Center',
+		right_bottom : 'Right Bottom'
+
+	};
+	var textsEs = {
+		label	: 'Imagen de fondo',
+		position : 'Posición del fondo',
+		repeat: 'Repetición del fondo',
+		repeatBoth : 'Repetir',
+		repeatX : 'Horizontalmente',
+		repeatY : 'Verticalmente',
+		repeatNone : 'Ninguno',
+		left_top : 'Izquierda arriba',
+		left_center :'Izquierda centro',
+		left_bottom : 'Izquierda abajo',
+		center_top : 'Centro arriba',
+		center_center : 'Centro centro',
+		center_bottom :'Centro abajo',
+		right_top : 'Derecha arriba',
+		right_center :' Derecha centro',
+		right_bottom : 'Derecha abajo'
+	};
+
+	if (CKEDITOR.skins)
+	{
+		// V3
+		CKEDITOR.plugins.setLang( 'backgrounds', 'en', { backgrounds : textsEn } );
+		CKEDITOR.plugins.setLang( 'backgrounds', 'es', { backgrounds : textsEs } );
+	}
+	else
+	{
+		// V4
+		CKEDITOR.plugins.setLang( 'backgrounds', 'en',	textsEn );
+		CKEDITOR.plugins.setLang( 'backgrounds', 'es',	textsEs );
+	}
+})();
