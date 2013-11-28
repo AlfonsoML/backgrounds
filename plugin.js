@@ -1,4 +1,4 @@
-﻿/*
+/*
  * @file Background plugin for CKEditor
  * Copyright (C) 2011-13 Alfonso Martínez de Lizarrondo
  *
@@ -26,7 +26,7 @@
 CKEDITOR.plugins.add( 'backgrounds',
 {
 	// Translations, available at the end of this file, without extra requests
-//	lang : [ 'en', 'es' ],
+//	lang : [ 'en', 'es', 'nl' ],
 
 	init : function( editor )
 	{
@@ -275,17 +275,37 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
 		right_center :' Derecha centro',
 		right_bottom : 'Derecha abajo'
 	};
+    var textsNl = {
+        label	: 'Achtergrond afbeelding',
+        position : 'Achtergrond positie',
+        repeat: 'Achtergrond herhaling',
+        repeatBoth : 'Herhalen',
+        repeatX : 'Horizontaal',
+        repeatY : 'Verticaal',
+        repeatNone : 'Geen',
+        left_top : 'Links Boven',
+        left_center :'Links Midden',
+        left_bottom : 'Links Onder',
+        center_top : 'Centreren Boven',
+        center_center : 'Centreren Midden',
+        center_bottom :'Centreren Onder',
+        right_top : 'Rechts Boven',
+        right_center :' Rechts Midden',
+        right_bottom : 'Rechts Onder'
+    };
 
 	if (CKEDITOR.skins)
 	{
 		// V3
 		CKEDITOR.plugins.setLang( 'backgrounds', 'en', { backgrounds : textsEn } );
 		CKEDITOR.plugins.setLang( 'backgrounds', 'es', { backgrounds : textsEs } );
+        CKEDITOR.plugins.setLang( 'backgrounds', 'nl', { backgrounds : textsNl } );
 	}
 	else
 	{
 		// V4
 		CKEDITOR.plugins.setLang( 'backgrounds', 'en',	textsEn );
 		CKEDITOR.plugins.setLang( 'backgrounds', 'es',	textsEs );
+        CKEDITOR.plugins.setLang( 'backgrounds', 'nl',	textsNl );
 	}
 })();
