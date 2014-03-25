@@ -1,4 +1,4 @@
-/*
+﻿/*
  * @file Background plugin for CKEditor
  * Copyright (C) 2011-13 Alfonso Martínez de Lizarrondo
  *
@@ -26,7 +26,7 @@
 CKEDITOR.plugins.add( 'backgrounds',
 {
 	// Translations, available at the end of this file, without extra requests
-//	lang : [ 'en', 'es', 'nl' ],
+//	lang : [ 'en', 'es', 'nl', 'ru', 'uk' ],
 
 	init : function( editor )
 	{
@@ -429,7 +429,16 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
 
 
 // Translations
-	var textsEn = {
+	function addTranslation(lang, texts) {
+		// V3 vs V4
+		if (CKEDITOR.skins)
+			CKEDITOR.plugins.setLang( 'backgrounds', lang, { backgrounds : texts } );
+		else
+			CKEDITOR.plugins.setLang( 'backgrounds', lang,	texts );
+	}
+
+	// English
+	addTranslation('en', {
 		label	: 'Background image',
 		position : 'Background position',
 		repeat: 'Background repeat',
@@ -452,9 +461,10 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
 		right_top : 'Right Top',
 		right_center :' Right Center',
 		right_bottom : 'Right Bottom'
+	});
 
-	};
-	var textsEs = {
+	// Spanish
+	addTranslation('es', {
 		label	: 'Imagen de fondo',
 		position : 'Posición del fondo',
 		repeat: 'Repetición del fondo',
@@ -477,8 +487,10 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
 		right_top: 'Derecha arriba',
 		right_center: ' Derecha centro',
 		right_bottom: 'Derecha abajo'
-	};
-    var textsNl = {
+	});
+
+	// Dutch
+    addTranslation('nl', {
         label	: 'Achtergrond afbeelding',
         position : 'Achtergrond positie',
         repeat: 'Achtergrond herhaling',
@@ -501,20 +513,57 @@ CKEDITOR.on( 'dialogDefinition', function( ev )
         right_top : 'Rechts Boven',
         right_center :' Rechts Midden',
         right_bottom : 'Rechts Onder'
-    };
+    });
 
-	if (CKEDITOR.skins)
-	{
-		// V3
-		CKEDITOR.plugins.setLang( 'backgrounds', 'en', { backgrounds : textsEn } );
-		CKEDITOR.plugins.setLang( 'backgrounds', 'es', { backgrounds : textsEs } );
-        CKEDITOR.plugins.setLang( 'backgrounds', 'nl', { backgrounds : textsNl } );
-	}
-	else
-	{
-		// V4
-		CKEDITOR.plugins.setLang( 'backgrounds', 'en',	textsEn );
-		CKEDITOR.plugins.setLang( 'backgrounds', 'es',	textsEs );
-        CKEDITOR.plugins.setLang( 'backgrounds', 'nl',	textsNl );
-	}
+	// Russian
+	addTranslation('ru', {
+		label: 'Фоновое изображение',
+		position: 'Позиция фона',
+		repeat: 'Повтор фона',
+		color: 'Цвет фона',
+		chooseColor: 'Выбрать',
+		attachment: 'Привязка фона',
+		attachmentScroll: 'Прокручивать со страницей (scroll)',
+		attachmentFixed: 'Фиксированная (fixed)',
+		attachmentLocal: 'Прокрутка с элементом (local)',
+		repeatBoth: 'Повтор',
+		repeatX: 'Горизонтально',
+		repeatY: 'Вертикально',
+		repeatNone: 'Без повтора',
+		left_top: 'Слева сверху',
+		left_center: 'Слева в центре',
+		left_bottom: 'Слева снизу',
+		center_top: 'По центру, сверху',
+		center_center: 'По центру',
+		center_bottom:'По центру, снизу',
+		right_top: 'Справа сверху',
+		right_center: 'Справа в центре',
+		right_bottom: 'Справа снизу'
+	});
+
+	// Ukranian
+	addTranslation('uk', {
+		label: 'Фонове зображення',
+		position: 'Позиція фону',
+		repeat: 'Повтор фону',
+		color: 'Колір фону',
+		chooseColor: 'Обрати',
+		attachment: 'Прив\'язка фона',
+		attachmentScroll: 'Прокручувати зі сторінкою (scroll)',
+		attachmentFixed: 'Фіксована (fixed)',
+		attachmentLocal: 'Прокручувати із елементом (local)',
+		repeatBoth: 'Повтор',
+		repeatX: 'Горизонтально',
+		repeatY: 'Вертикально',
+		repeatNone: 'Без повтору',
+		left_top: 'Зліва згори',
+		left_center: 'Зліва посередині',
+		left_bottom: 'Зліва знизу',
+		center_top: 'По центру, зверху',
+		center_center: 'По центру',
+		center_bottom:'По центру, знизу',
+		right_top: 'Справа згори',
+		right_center: 'Справа посередині',
+		right_bottom: 'Справа знизу'
+	});
 })();
